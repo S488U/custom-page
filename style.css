@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0);
+    -webkit-backdrop-filter: blur(2.3px);
+    backdrop-filter: blur(2.3px);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(2.3px);
+    backdrop-filter: blur(2.3px);
+    border-radius: 0 0 16px 16px;
+    
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+:root {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    -webkit-transition: background-image 0.2s ease-in-out; 
+    transition: background-image 0.2s ease-in-out;
+  }
+
+.cards {
+    /* width: 70%; */
+    height: 95px;
+    margin:15%;
+    margin-top: 4%;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    row-gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2.3px);
+    -webkit-backdrop-filter: blur(2.3px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: 150px;
+}
+
+a {
+    width: 90px!important;
+    height: 75px!important;
+    display: flex;
+    flex-wrap: nowrap;
+    text-decoration: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    margin: 0 15px;
+    flex-shrink: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+img {
+    height: 30px;
+    width: 30px;
+    margin: 5px;
+}
+
+label {
+    cursor: pointer;
+}
+
+.search {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 12%;
+    margin-top: 2em;
+}
+
+.google,
+.bing
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+input[type="text"] {
+    width: 350px;
+    height: 20px;
+    padding: 10px 10px 10px 20px;
+    font-size: 20px;
+    margin-right: 1rem;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+}
+
+input[type="submit"] {
+    visibility: hidden;
+}
+
+.admin-panel {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    position: absolute;
+    top: 182px;
+    left: 50px;
+    padding: 10px;
+    background-color: rgba(255,255,255,0.12);
+    backdrop-filter: blur(1.3px);
+    -webkit-backdrop-filter: blur(1.3px);
+    border: .5px solid rgba(255,255,255,0.12);
+    border-radius: 11px;
+    cursor: pointer;
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+<body>
+    <h1>Add Background URLs</h1>
+    <input type="text" id="imageUrlInput" placeholder="Enter Image URL">
+    <button onclick="addImageUrl()">Add URL</button>
+    <div id="msgContainer">
+        <span id="msg"></span> <!-- Element to display messages -->
+        <button id="clearButton" onclick="clearMessage()">x</button>
+    </div>
+    <ul id="urlList"></ul>
+
+
+    <script>
+
+        function addImageUrl() {
+        const imageUrl = document.getElementById('imageUrlInput').value.trim();
+        const msgElement = document.getElementById('msg');
+
+        // URL verification
+        const validExtensions = ['.png', '.webp', '.jpg', '.jpeg'];
+        const isValidUrl = /^(https?:\/\/)?([\w\d.-]+)\.([a-z.]{2,6})(\/[\w\d.\/%&=-]*)?$/i.test(imageUrl);
+
+        // Check if the URL is from the whitelisted domain
+
+        if (!isValidUrl || !validExtensions.some(ext => imageUrl.endsWith(ext))) {
+            msgElement.textContent = 'Please enter a valid Image URL with a supported extension (e.g., .png, .webp, .jpg, .jpeg) and a valid protocol (http:// or https://) from a whitelisted domain (img.freepik.com).';
+            return;
+        }
+
+        // Retrieve the existing URLs from localStorage or initialize an empty array
+        const backgroundImages = JSON.parse(localStorage.getItem('backgroundImages')) || [];
+        backgroundImages.push(imageUrl);
+        localStorage.setItem('backgroundImages', JSON.stringify(backgroundImages));
+        document.getElementById('imageUrlInput').value = '';
+        msgElement.textContent = 'Image URL added successfully!';
+        }
+
+        function clearMessage() {
+        const msgElement = document.getElementById('msg');
+        msgElement.textContent = '';
+        document.getElementById('clearButton').style.display = 'none'; // Hide the clear button
+        }
+
+        function displayImageUrls() {
+        const urlList = document.getElementById('urlList');
+        urlList.innerHTML = ''; // Clear existing list
+
+        // Retrieve the background images URLs from localStorage or initialize an empty array
+        const backgroundImages = JSON.parse(localStorage.getItem('backgroundImages')) || [];
+
+        // Loop through the URLs and add them to the list with a delete button
+        backgroundImages.forEach((url, index) => {
+            const listItem = document.createElement('li');
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.textContent = url;
+            
+            // Add the 'mousedown' event listener to handle 'Control + Click'
+            link.addEventListener('mousedown', (event) => {
+            if (event.ctrlKey) {
+                // Open the URL in a new tab when 'Control + Click' is detected
+                window.open(url, '_blank');
+                event.preventDefault(); // Prevent the default behavior (navigating to the URL)
+            }
+            });
+
+            listItem.appendChild(link);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+            // Remove the URL from the array and update localStorage
+            backgroundImages.splice(index, 1);
+            localStorage.setItem('backgroundImages', JSON.stringify(backgroundImages));
+            displayImageUrls(); // Update the list after deleting
+            });
+
+            listItem.appendChild(deleteButton);
+            urlList.appendChild(listItem);
+        });
+        }
+
+        // Call the displayImageUrls function initially to show the added URLs on page load
+        displayImageUrls();
+
+    </script>
+
+    <br>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <div class="admin-panel">
+        <h1>Add Custom Cards</h1>
+        <form id="linkForm">
+            <label for="link">Link:</label>
+            <input type="text" id="link" required>
+            <label for="logoUrl">Logo URL:</label>
+            <input type="text" id="logoUrl" required>
+            <label for="labelText">Label Text:</label>
+            <input type="text" id="labelText" required>
+            <button type="submit">Add Link</button>
+        </form>
+
+        <div class="link-list">
+            <h3>Added Links:</h3>
+            <ul id="linkList">
+                <!-- The added links will be displayed here -->
+            </ul>
+        </div>
+    </div>
+     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const linkForm = document.getElementById('linkForm');
+            const linkList = document.getElementById('linkList');
+
+            linkForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const link = document.getElementById('link').value;
+                const logoUrl = document.getElementById('logoUrl').value;
+                const labelText = document.getElementById('labelText').value;
+
+                // Save the link, logo URL, and label text in local storage
+                saveLinkAndLogo(link, logoUrl, labelText);
+
+                // Clear the input fields
+                document.getElementById('link').value = '';
+                document.getElementById('logoUrl').value = '';
+                document.getElementById('labelText').value = '';
+
+                // Update link list in admin.html
+                updateLinkList();
+            });
+
+            function saveLinkAndLogo(link, logoUrl, labelText) {
+                // Get the existing links and logo data from local storage
+                const linksAndLogos = JSON.parse(localStorage.getItem('linksAndLogos')) || [];
+
+                // Add the new link, logo, and label to the data
+                linksAndLogos.push({ link, logoUrl, labelText });
+
+                // Save the updated data back to local storage
+                localStorage.setItem('linksAndLogos', JSON.stringify(linksAndLogos));
+            }
+
+            function updateLinkList() {
+                // Get the links and logo data from local storage
+                const linksAndLogos = JSON.parse(localStorage.getItem('linksAndLogos')) || [];
+
+                // Clear the existing link list
+                linkList.innerHTML = '';
+
+                // Add the new links and logos to the link list
+                linksAndLogos.forEach(({ link, logoUrl, labelText }, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                    <strong class="index">${index + 1}</strong>
+                    <div>
+                        <span><strong>Label: </strong>${labelText}</span>
+                        <br>
+                        <span><strong>Link: </strong><a href="${link}">${link}</a></span>
+                        <br>
+                        <span><strong>Logo URL: </strong><a href="${logoUrl}">${logoUrl}</a></span>
+                    </div>
+                    <button onclick="deleteLink(${index})">Delete</button>
+                    `;
+                    linkList.appendChild(listItem);
+                });
+            }
+
+
+            // Initial rendering of link list
+            updateLinkList();
+        });
+
+        function deleteLink(index) {
+            // Get the existing links and logo data from local storage
+            const linksAndLogos = JSON.parse(localStorage.getItem('linksAndLogos')) || [];
+
+            // Remove the link and logo from the data at the specified index
+            linksAndLogos.splice(index, 1);
+
+            // Save the updated data back to local storage
+            localStorage.setItem('linksAndLogos', JSON.stringify(linksAndLogos));
+
+            // Update link list in admin.html
+            updateLinkList();
+        }
+    </script>
+</body>
+</html>
+
+    <style>
+        ::placeholder {
+        color: #999;
+        opacity: 1;
+        transition: opacity 0.3s ease; 
+        }
+
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        }
+
+        form,
+        h3
+        {
+            padding: 20px;
+        }
+
+        .index {
+            padding: 30px;
+        }
+
+        #clearButton {
+            margin-left: 10px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 27%;
+            display: none;
+        }
+
+        h1 {
+        margin: 20px;
+        }
+
+        ul {
+        list-style: none;
+        padding: 0;
+        }
+
+        li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Align items horizontally with space in-between */
+        margin: 10px;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        a {
+        flex: 1;
+        color: #333;
+        text-decoration: none;
+        }
+
+        input[type="text"] {
+            padding: 6px 10px;
+            width: 15rem;
+            margin-left: 10px;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            outline: #e74c3c;
+        }
+
+        button {
+        margin-left: 10px;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        }
+
+        button:hover {
+        background-color: #c0392b;
+        }
+    </style>

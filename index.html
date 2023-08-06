@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <script src="https://kit.fontawesome.com/4145934b9b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="cards">
+            
+        </div>
+        <div class="search">
+            <form onsubmit="googleSend(); return false;" class="google" id="google">
+                <input type="text" id="gtext" placeholder="Search in Google">
+                <input type="submit" value="submit">
+            </form>
+            <form  onsubmit="bingSend()" class="google" id="bing">
+                <input type="text" id="btext" placeholder="Search in Bing">
+                <input type="submit" value="submit">
+            </form>
+        </div>
+        <h2 class="admin-panel" onclick="adminPanel()">Admin Panel</>
+    </main>
+</body>
+</html>
+<script>
+        // Function to change the background image
+    function changeBackground() {
+      // Retrieve the background images URLs from localStorage or initialize an empty array
+      const backgroundImages = JSON.parse(localStorage.getItem('backgroundImages')) || [];
+
+      if (backgroundImages.length === 0) {
+        alert('Please add image URLs in the admin page first.');
+        return;
+      }
+
+      // Get a random index to choose a random background image from the array
+      const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+
+      // Set the background image using the random index
+      document.body.style.backgroundImage = `url(${backgroundImages[randomIndex]})`;
+    }
+
+    // Call the changeBackground function initially to set the background on page load
+    changeBackground();
+
+    // Call the changeBackground function every 24 hours (in milliseconds)
+    setInterval(changeBackground, 1000/*24 * 60 * 60 * 1000*/);
+
+    document.addEventListener('DOMContentLoaded', () => {
+            const subCards = document.querySelector('.cards');
+
+            function updateSubCards() {
+                // Get the links and logo data from local storage
+                const linksAndLogos = JSON.parse(localStorage.getItem('linksAndLogos')) || [];
+
+                // Clear the existing sub-cards
+                subCards.innerHTML = '';
+
+                // Add the new links and logos to the sub-cards
+                linksAndLogos.forEach(({ link, logoUrl, labelText }) => {
+                    const newLinkElement = document.createElement('a');
+                    newLinkElement.href = link;
+
+                    const newLogoElement = document.createElement('img');
+                    newLogoElement.src = logoUrl;
+                    newLogoElement.alt = `${labelText}_logo`;
+
+                    const newLabelElement = document.createElement('label');
+                    newLabelElement.textContent = labelText;
+
+                    newLinkElement.appendChild(newLogoElement);
+                    newLinkElement.appendChild(newLabelElement);
+                    subCards.appendChild(newLinkElement);
+                });
+            }
+
+            // Initial rendering of sub-cards
+            updateSubCards();
+        });
+
+        function googleSend() {
+            const gvalue = document.getElementById("gtext").value;
+            const google = "https://www.google.com/search?q=";
+
+            window.location.href = google + gvalue;
+        }
+
+        function bingSend() {
+            const bvalue = document.getElementById("btext").value;
+            const bing = "https://www.bing.com/search?q=";
+
+            window.location.href = bing + bvalue;
+        }
+
+        function adminPanel() {
+            window.location.href = "./admin.html";
+        }
+
+</script>
